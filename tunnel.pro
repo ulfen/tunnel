@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui widgets
+QT       += serialport
 
 TARGET = tunnel
 TEMPLATE = app
@@ -24,13 +25,21 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+    mainwindow.cpp \
+    settingsdialog.cpp \
+    console.cpp
 
 HEADERS += \
-        mainwindow.h
+    mainwindow.h \
+    settingsdialog.h \
+    console.h
 
 FORMS += \
-        mainwindow.ui
+    mainwindow.ui \
+    settingsdialog.ui
+
+RESOURCES += \
+    tunnel.qrc
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
