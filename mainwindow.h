@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QSerialPort>
 
 QT_BEGIN_NAMESPACE
 
@@ -15,7 +14,7 @@ class MainWindow;
 QT_END_NAMESPACE
 
 class Console;
-class SettingsDialog;
+class SerialEndpoint;
 
 class MainWindow : public QMainWindow
 {
@@ -26,12 +25,8 @@ public:
     ~MainWindow();
 
 private slots:
-    void openSerialPort();
-    void closeSerialPort();
-    void writeData(const QByteArray &data);
-    void readData();
-
-    void handleError(QSerialPort::SerialPortError error);
+    void connectEndpoint();
+    void disconnectEndpoint();
 
 private:
     void initActionsConnections();
@@ -42,8 +37,7 @@ private:
     Ui::MainWindow *m_ui = nullptr;
     QLabel *m_status = nullptr;
     Console *m_console = nullptr;
-    SettingsDialog *m_settings = nullptr;
-    QSerialPort *m_serial = nullptr;
+    SerialEndpoint *m_endpoint = nullptr;
 };
 
 #endif // MAINWINDOW_H

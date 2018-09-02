@@ -65,7 +65,15 @@ Console::Console(QWidget *parent) :
 
 void Console::putData(const QByteArray &data)
 {
+    QTextCharFormat tf;
+    tf = currentCharFormat();
+    tf.setForeground(QBrush(Qt::red));
+    setCurrentCharFormat(tf);
+
     insertPlainText(data);
+
+    tf.setForeground(QBrush(Qt::green));
+    setCurrentCharFormat(tf);
 
     QScrollBar *bar = verticalScrollBar();
     bar->setValue(bar->maximum());

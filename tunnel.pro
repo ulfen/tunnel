@@ -27,12 +27,14 @@ SOURCES += \
         main.cpp \
     mainwindow.cpp \
     settingsdialog.cpp \
-    console.cpp
+    console.cpp \
+    serialendpoint.cpp
 
 HEADERS += \
     mainwindow.h \
     settingsdialog.h \
-    console.h
+    console.h \
+    serialendpoint.h
 
 FORMS += \
     mainwindow.ui \
