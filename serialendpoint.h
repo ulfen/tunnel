@@ -1,27 +1,23 @@
 #ifndef SERIALENDPOINT_H
 #define SERIALENDPOINT_H
 
-#include <QObject>
+#include "endpoint.h"
 #include <QSerialPort>
 
 class SettingsDialog;
 
-class SerialEndpoint : public QObject
+class SerialEndpoint : public Endpoint
 {
     Q_OBJECT
 public:
     explicit SerialEndpoint(QObject *parent = nullptr);
     ~SerialEndpoint();
 
-signals:
-    void getData(const QByteArray &data) const;
-    void statusMessage(const QString &message) const;
-
 public slots:
-    void putData(const QByteArray &data);
-    bool open();
-    void close();
-    void showDialog();
+    virtual void putData(const QByteArray &data);
+    virtual bool open();
+    virtual void close();
+    virtual void showDialog();
 
     void readData();
     void handleError(QSerialPort::SerialPortError error);

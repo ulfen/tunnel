@@ -14,7 +14,7 @@ class MainWindow;
 QT_END_NAMESPACE
 
 class Console;
-class SerialEndpoint;
+class Endpoint;
 
 class MainWindow : public QMainWindow
 {
@@ -37,7 +37,7 @@ private:
     Ui::MainWindow *m_ui = nullptr;
     QLabel *m_status = nullptr;
     Console *m_console = nullptr;
-    SerialEndpoint *m_endpoint[2];
+    Endpoint *m_endpoint[2];
 };
 
 #endif // MAINWINDOW_H

@@ -26,15 +26,17 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
     mainwindow.cpp \
-    settingsdialog.cpp \
     console.cpp \
-    serialendpoint.cpp
+    endpoint.cpp \
+    serialendpoint.cpp \
+    settingsdialog.cpp
 
 HEADERS += \
     mainwindow.h \
-    settingsdialog.h \
     console.h \
-    serialendpoint.h
+    endpoint.h \
+    serialendpoint.h \
+    settingsdialog.h
 
 FORMS += \
     mainwindow.ui \

@@ -28,14 +28,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     initActionsConnections();
 
-    connect(m_endpoint[0], &SerialEndpoint::statusMessage, this, &MainWindow::showStatusMessage);
-    connect(m_endpoint[0], &SerialEndpoint::getData, m_endpoint[1], &SerialEndpoint::putData);
-    connect(m_endpoint[0], &SerialEndpoint::getData,
+    connect(m_endpoint[0], &Endpoint::statusMessage, this, &MainWindow::showStatusMessage);
+    connect(m_endpoint[0], &Endpoint::getData, m_endpoint[1], &Endpoint::putData);
+    connect(m_endpoint[0], &Endpoint::getData,
             [=]( const QByteArray &data ) { m_console->putData(data, QBrush(Qt::blue)); }
     );
-    connect(m_endpoint[1], &SerialEndpoint::statusMessage, this, &MainWindow::showStatusMessage);
-    connect(m_endpoint[1], &SerialEndpoint::getData, m_endpoint[0], &SerialEndpoint::putData);
-    connect(m_endpoint[1], &SerialEndpoint::getData,
+    connect(m_endpoint[1], &Endpoint::statusMessage, this, &MainWindow::showStatusMessage);
+    connect(m_endpoint[1], &Endpoint::getData, m_endpoint[0], &Endpoint::putData);
+    connect(m_endpoint[1], &Endpoint::getData,
             [=]( const QByteArray &data ) { m_console->putData(data, QBrush(Qt::red)); }
     );
 }
@@ -79,8 +79,8 @@ void MainWindow::initActionsConnections()
     connect(m_ui->actionConnect, &QAction::triggered, this, &MainWindow::connectEndpoint);
     connect(m_ui->actionDisconnect, &QAction::triggered, this, &MainWindow::disconnectEndpoint);
     connect(m_ui->actionQuit, &QAction::triggered, this, &MainWindow::close);
-    connect(m_ui->actionConfigure, &QAction::triggered, m_endpoint[0], &SerialEndpoint::showDialog);
-    connect(m_ui->actionConfigure, &QAction::triggered, m_endpoint[1], &SerialEndpoint::showDialog);
+    connect(m_ui->actionConfigure, &QAction::triggered, m_endpoint[0], &Endpoint::showDialog);
+    connect(m_ui->actionConfigure, &QAction::triggered, m_endpoint[1], &Endpoint::showDialog);
     connect(m_ui->actionClear, &QAction::triggered, m_console, &Console::clear);
 }
 

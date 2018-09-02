@@ -5,7 +5,7 @@
 #include <QQueue>
 
 SerialEndpoint::SerialEndpoint(QObject *parent) :
-    QObject(parent),
+    Endpoint(parent),
     m_settings(new SettingsDialog),
     m_serial(new QSerialPort(this))
 {
