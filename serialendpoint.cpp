@@ -26,7 +26,10 @@ void SerialEndpoint::putData(const QByteArray &data)
 bool SerialEndpoint::open()
 {
     const SettingsDialog::Settings p = m_settings->settings();
-    m_serial->setPortName(p.name);
+    QString port = p.name;
+    if (!port.startsWith("\\\\.\\"))
+        port = "\\\\.\\" + port;
+    m_serial->setPortName(port);
     m_serial->setBaudRate(p.baudRate);
     m_serial->setDataBits(p.dataBits);
     m_serial->setParity(p.parity);
@@ -48,7 +51,6 @@ void SerialEndpoint::close()
 {
     if (m_serial->isOpen())
         m_serial->close();
-    emit statusMessage(tr("Disconnected"));
 }
 
 void SerialEndpoint::showDialog()

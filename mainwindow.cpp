@@ -10,9 +10,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     m_ui(new Ui::MainWindow),
     m_status(new QLabel),
-    m_console(new Console),
-    m_endpoint(new SerialEndpoint(this))
+    m_console(new Console)
 {
+    m_endpoint[0] = new SerialEndpoint(this);
+    m_endpoint[1] = new SerialEndpoint(this);
+
     m_ui->setupUi(this);
     m_console->setEnabled(false);
     setCentralWidget(m_console);
@@ -26,36 +28,50 @@ MainWindow::MainWindow(QWidget *parent) :
 
     initActionsConnections();
 
-    connect(m_endpoint, &SerialEndpoint::statusMessage, this, &MainWindow::showStatusMessage);
-    connect(m_endpoint, &SerialEndpoint::getData, m_console, &Console::putData);
-    connect(m_console, &Console::getData, m_endpoint, &SerialEndpoint::putData);
+    connect(m_endpoint[0], &SerialEndpoint::statusMessage, this, &MainWindow::showStatusMessage);
+    connect(m_endpoint[0], &SerialEndpoint::getData, m_endpoint[1], &SerialEndpoint::putData);
+    connect(m_endpoint[0], &SerialEndpoint::getData,
+            [=]( const QByteArray &data ) { m_console->putData(data, QBrush(Qt::blue)); }
+    );
+    connect(m_endpoint[1], &SerialEndpoint::statusMessage, this, &MainWindow::showStatusMessage);
+    connect(m_endpoint[1], &SerialEndpoint::getData, m_endpoint[0], &SerialEndpoint::putData);
+    connect(m_endpoint[1], &SerialEndpoint::getData,
+            [=]( const QByteArray &data ) { m_console->putData(data, QBrush(Qt::red)); }
+    );
 }
 
 MainWindow::~MainWindow()
 {
-    delete m_endpoint;
+    delete m_endpoint[0];
+    delete m_endpoint[1];
     delete m_ui;
 }
 
 void MainWindow::connectEndpoint()
 {
-    if (m_endpoint->open())
+    if (m_endpoint[0]->open() && m_endpoint[1]->open())
     {
         m_console->setEnabled(true);
-        m_console->setLocalEchoEnabled(true);
         m_ui->actionConnect->setEnabled(false);
         m_ui->actionDisconnect->setEnabled(true);
         m_ui->actionConfigure->setEnabled(false);
+    }
+    else
+    {
+        m_endpoint[0]->close();
+        m_endpoint[1]->close();
     }
 }
 
 void MainWindow::disconnectEndpoint()
 {
-    m_endpoint->close();
+    m_endpoint[0]->close();
+    m_endpoint[1]->close();
     m_console->setEnabled(false);
     m_ui->actionConnect->setEnabled(true);
     m_ui->actionDisconnect->setEnabled(false);
     m_ui->actionConfigure->setEnabled(true);
+    showStatusMessage(tr("Disconnected"));
 }
 
 void MainWindow::initActionsConnections()
@@ -63,7 +79,8 @@ void MainWindow::initActionsConnections()
     connect(m_ui->actionConnect, &QAction::triggered, this, &MainWindow::connectEndpoint);
     connect(m_ui->actionDisconnect, &QAction::triggered, this, &MainWindow::disconnectEndpoint);
     connect(m_ui->actionQuit, &QAction::triggered, this, &MainWindow::close);
-    connect(m_ui->actionConfigure, &QAction::triggered, m_endpoint, &SerialEndpoint::showDialog);
+    connect(m_ui->actionConfigure, &QAction::triggered, m_endpoint[0], &SerialEndpoint::showDialog);
+    connect(m_ui->actionConfigure, &QAction::triggered, m_endpoint[1], &SerialEndpoint::showDialog);
     connect(m_ui->actionClear, &QAction::triggered, m_console, &Console::clear);
 }
 

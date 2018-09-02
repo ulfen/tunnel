@@ -37,7 +37,7 @@ private:
     Ui::MainWindow *m_ui = nullptr;
     QLabel *m_status = nullptr;
     Console *m_console = nullptr;
-    SerialEndpoint *m_endpoint = nullptr;
+    SerialEndpoint *m_endpoint[2];
 };
 
 #endif // MAINWINDOW_H
