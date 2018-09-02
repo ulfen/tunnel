@@ -2,29 +2,30 @@
 #include "ui_mainwindow.h"
 #include "console.h"
 #include "serialendpoint.h"
+#include "canendpoint.h"
 
 #include <QLabel>
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    m_ui(new Ui::MainWindow),
+    ui(new Ui::MainWindow),
     m_status(new QLabel),
     m_console(new Console)
 {
     m_endpoint[0] = new SerialEndpoint(this);
-    m_endpoint[1] = new SerialEndpoint(this);
+    m_endpoint[1] = new CanEndpoint(this);
 
-    m_ui->setupUi(this);
+    ui->setupUi(this);
     m_console->setEnabled(false);
     setCentralWidget(m_console);
 
-    m_ui->actionConnect->setEnabled(true);
-    m_ui->actionDisconnect->setEnabled(false);
-    m_ui->actionQuit->setEnabled(true);
-    m_ui->actionConfigure->setEnabled(true);
+    ui->actionConnect->setEnabled(true);
+    ui->actionDisconnect->setEnabled(false);
+    ui->actionQuit->setEnabled(true);
+    ui->actionConfigure->setEnabled(true);
 
-    m_ui->statusBar->addWidget(m_status);
+    ui->statusBar->addWidget(m_status);
 
     initActionsConnections();
 
@@ -44,7 +45,7 @@ MainWindow::~MainWindow()
 {
     delete m_endpoint[0];
     delete m_endpoint[1];
-    delete m_ui;
+    delete ui;
 }
 
 void MainWindow::connectEndpoint()
@@ -52,9 +53,9 @@ void MainWindow::connectEndpoint()
     if (m_endpoint[0]->open() && m_endpoint[1]->open())
     {
         m_console->setEnabled(true);
-        m_ui->actionConnect->setEnabled(false);
-        m_ui->actionDisconnect->setEnabled(true);
-        m_ui->actionConfigure->setEnabled(false);
+        ui->actionConnect->setEnabled(false);
+        ui->actionDisconnect->setEnabled(true);
+        ui->actionConfigure->setEnabled(false);
     }
     else
     {
@@ -68,20 +69,20 @@ void MainWindow::disconnectEndpoint()
     m_endpoint[0]->close();
     m_endpoint[1]->close();
     m_console->setEnabled(false);
-    m_ui->actionConnect->setEnabled(true);
-    m_ui->actionDisconnect->setEnabled(false);
-    m_ui->actionConfigure->setEnabled(true);
+    ui->actionConnect->setEnabled(true);
+    ui->actionDisconnect->setEnabled(false);
+    ui->actionConfigure->setEnabled(true);
     showStatusMessage(tr("Disconnected"));
 }
 
 void MainWindow::initActionsConnections()
 {
-    connect(m_ui->actionConnect, &QAction::triggered, this, &MainWindow::connectEndpoint);
-    connect(m_ui->actionDisconnect, &QAction::triggered, this, &MainWindow::disconnectEndpoint);
-    connect(m_ui->actionQuit, &QAction::triggered, this, &MainWindow::close);
-    connect(m_ui->actionConfigure, &QAction::triggered, m_endpoint[0], &Endpoint::showDialog);
-    connect(m_ui->actionConfigure, &QAction::triggered, m_endpoint[1], &Endpoint::showDialog);
-    connect(m_ui->actionClear, &QAction::triggered, m_console, &Console::clear);
+    connect(ui->actionConnect, &QAction::triggered, this, &MainWindow::connectEndpoint);
+    connect(ui->actionDisconnect, &QAction::triggered, this, &MainWindow::disconnectEndpoint);
+    connect(ui->actionQuit, &QAction::triggered, this, &MainWindow::close);
+    connect(ui->actionConfigure, &QAction::triggered, m_endpoint[0], &Endpoint::showDialog);
+    connect(ui->actionConfigure, &QAction::triggered, m_endpoint[1], &Endpoint::showDialog);
+    connect(ui->actionClear, &QAction::triggered, m_console, &Console::clear);
 }
 
 void MainWindow::showStatusMessage(const QString &message)

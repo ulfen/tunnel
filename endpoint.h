@@ -3,6 +3,12 @@
 
 #include <QObject>
 
+QT_BEGIN_NAMESPACE
+
+class QTimer;
+
+QT_END_NAMESPACE
+
 class Endpoint : public QObject
 {
     Q_OBJECT
@@ -15,10 +21,18 @@ signals:
     void statusMessage(const QString &message) const;
 
 public slots:
-    virtual void putData(const QByteArray &data) = 0;
-    virtual bool open() = 0;
-    virtual void close() = 0;
+    virtual void putData(const QByteArray &data);
+    virtual bool open();
+    virtual void close();
     virtual void showDialog() = 0;
+
+protected slots:
+    virtual void update();
+    virtual bool writeData(const QByteArray &data) = 0;
+
+protected:
+    QQueue<qint8> *m_queue = nullptr;
+    QTimer *m_timer = nullptr;
 };
 
 #endif // ENDPOINT_H

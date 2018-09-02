@@ -14,11 +14,12 @@ public:
     ~SerialEndpoint();
 
 public slots:
-    virtual void putData(const QByteArray &data);
     virtual bool open();
     virtual void close();
     virtual void showDialog();
 
+protected slots:
+    virtual bool writeData(const QByteArray &data);
     void readData();
     void handleError(QSerialPort::SerialPortError error);
 

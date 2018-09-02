@@ -16,11 +16,9 @@ SerialEndpoint::SerialEndpoint(QObject *parent) :
 SerialEndpoint::~SerialEndpoint()
 {
     close();
-}
+    delete m_settings;
+    delete m_serial;
 
-void SerialEndpoint::putData(const QByteArray &data)
-{
-    m_serial->write(data);
 }
 
 bool SerialEndpoint::open()
@@ -56,6 +54,12 @@ void SerialEndpoint::close()
 void SerialEndpoint::showDialog()
 {
     m_settings->show();
+}
+
+bool SerialEndpoint::writeData(const QByteArray &data)
+{
+    qint64 written = m_serial->write(data);
+    return written == data.length();
 }
 
 void SerialEndpoint::readData()

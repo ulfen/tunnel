@@ -6,6 +6,7 @@
 
 QT       += core gui widgets
 QT       += serialport
+QT       += serialbus
 
 TARGET = tunnel
 TEMPLATE = app
@@ -29,18 +30,25 @@ SOURCES += \
     console.cpp \
     endpoint.cpp \
     serialendpoint.cpp \
-    settingsdialog.cpp
+    settingsdialog.cpp \
+    canendpoint.cpp \
+    connectdialog.cpp \
+    bitratebox.cpp
 
 HEADERS += \
     mainwindow.h \
     console.h \
     endpoint.h \
     serialendpoint.h \
-    settingsdialog.h
+    settingsdialog.h \
+    canendpoint.h \
+    connectdialog.h \
+    bitratebox.h
 
 FORMS += \
     mainwindow.ui \
-    settingsdialog.ui
+    settingsdialog.ui \
+    connectdialog.ui
 
 RESOURCES += \
     tunnel.qrc

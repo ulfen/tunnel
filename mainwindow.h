@@ -34,7 +34,7 @@ private:
 private:
     void showStatusMessage(const QString &message);
 
-    Ui::MainWindow *m_ui = nullptr;
+    Ui::MainWindow *ui = nullptr;
     QLabel *m_status = nullptr;
     Console *m_console = nullptr;
     Endpoint *m_endpoint[2];
