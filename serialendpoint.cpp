@@ -11,6 +11,8 @@ SerialEndpoint::SerialEndpoint(QObject *parent) :
 {
     connect(m_serial, &QSerialPort::errorOccurred, this, &SerialEndpoint::handleError);
     connect(m_serial, &QSerialPort::readyRead, this, &SerialEndpoint::readData);
+    max_burst_length = 16;
+    max_packet_length = 1;
 }
 
 SerialEndpoint::~SerialEndpoint()
@@ -25,8 +27,12 @@ bool SerialEndpoint::open()
 {
     const SettingsDialog::Settings p = m_settings->settings();
     QString port = p.name;
+
+#if (defined Q_OS_WIN)
     if (!port.startsWith("\\\\.\\"))
         port = "\\\\.\\" + port;
+#endif
+
     m_serial->setPortName(port);
     m_serial->setBaudRate(p.baudRate);
     m_serial->setDataBits(p.dataBits);

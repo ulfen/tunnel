@@ -32,7 +32,10 @@ protected slots:
 
 protected:
     QQueue<qint8> *m_queue = nullptr;
+    QByteArray waiting;
     QTimer *m_timer = nullptr;
+    int max_burst_length = 1;
+    int max_packet_length = 1;
 };
 
 #endif // ENDPOINT_H

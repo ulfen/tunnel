@@ -79,6 +79,12 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     fillPortsParameters();
     fillPortsInfo();
 
+#ifdef Q_OS_WIN
+    int index = m_ui->serialPortInfoListBox->findText("COM", Qt::MatchStartsWith);
+    if (index >= 0)
+        m_ui->serialPortInfoListBox->setCurrentIndex(index);
+#endif
+
     updateSettings();
 }
 
@@ -136,8 +142,10 @@ void SettingsDialog::fillPortsParameters()
     m_ui->baudRateBox->addItem(QStringLiteral("9600"), QSerialPort::Baud9600);
     m_ui->baudRateBox->addItem(QStringLiteral("19200"), QSerialPort::Baud19200);
     m_ui->baudRateBox->addItem(QStringLiteral("38400"), QSerialPort::Baud38400);
+    m_ui->baudRateBox->addItem(QStringLiteral("57600"), QSerialPort::Baud57600);
     m_ui->baudRateBox->addItem(QStringLiteral("115200"), QSerialPort::Baud115200);
     m_ui->baudRateBox->addItem(tr("Custom"));
+    m_ui->baudRateBox->setCurrentIndex(4);
 
     m_ui->dataBitsBox->addItem(QStringLiteral("5"), QSerialPort::Data5);
     m_ui->dataBitsBox->addItem(QStringLiteral("6"), QSerialPort::Data6);
@@ -162,13 +170,36 @@ void SettingsDialog::fillPortsParameters()
     m_ui->flowControlBox->addItem(tr("XON/XOFF"), QSerialPort::SoftwareControl);
 }
 
+bool comparePortInfo(const QSerialPortInfo &port_a, const QSerialPortInfo &port_b)
+{
+    QString a = port_a.portName();
+    QString b = port_b.portName();
+
+#ifdef Q_OS_WIN
+    if (a.toUpper().startsWith("COM") && b.toUpper().startsWith("COM"))
+    {
+        bool ok_a, ok_b;
+
+        int i = a.right(a.length() - 3).toInt(&ok_a);
+        int j = b.right(b.length() - 3).toInt(&ok_b);
+
+        if (ok_a && ok_b)
+            return i < j;
+    }
+#endif
+
+    return a < b;
+}
+
 void SettingsDialog::fillPortsInfo()
 {
     m_ui->serialPortInfoListBox->clear();
     QString description;
     QString manufacturer;
     QString serialNumber;
-    const auto infos = QSerialPortInfo::availablePorts();
+    auto infos = QSerialPortInfo::availablePorts();
+    std::sort(infos.begin(), infos.end(), comparePortInfo);
+
     for (const QSerialPortInfo &info : infos) {
         QStringList list;
         description = info.description();

@@ -87,6 +87,10 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
 
     m_ui->pluginListBox->addItems(QCanBus::instance()->plugins());
 
+    int index = m_ui->pluginListBox->findText("peakcan");
+    if (index >= 0)
+        m_ui->pluginListBox->setCurrentIndex(index);
+
     updateSettings();
 }
 

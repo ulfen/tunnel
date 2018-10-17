@@ -30,11 +30,10 @@ private slots:
 
 private:
     void initActionsConnections();
-
-private:
     void showStatusMessage(const QString &message);
 
-    Ui::MainWindow *ui = nullptr;
+private:
+    Ui::MainWindow *m_ui = nullptr;
     QLabel *m_status = nullptr;
     Console *m_console = nullptr;
     Endpoint *m_endpoint[2];

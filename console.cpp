@@ -6,19 +6,26 @@ Console::Console(QWidget *parent) :
     QPlainTextEdit(parent)
 {
     document()->setMaximumBlockCount(100);
+    m_update = true;
 }
 
 void Console::putData(const QByteArray &data, const QBrush &col)
 {
-    QTextCharFormat tf;
-    tf = currentCharFormat();
-    tf.setForeground(col);
-    setCurrentCharFormat(tf);
+    if (data.length() > 4)
+        m_update = false;
 
-    insertPlainText(data);
+    if (m_update)
+    {
+        QTextCharFormat tf;
+        tf = currentCharFormat();
+        tf.setForeground(col);
+        setCurrentCharFormat(tf);
 
-    QScrollBar *bar = verticalScrollBar();
-    bar->setValue(bar->maximum());
+        insertPlainText(data);
+
+        QScrollBar *bar = verticalScrollBar();
+        bar->setValue(bar->maximum());
+    }
 }
 
 void Console::keyPressEvent(QKeyEvent *e)
@@ -40,4 +47,10 @@ void Console::mouseDoubleClickEvent(QMouseEvent *e)
 void Console::contextMenuEvent(QContextMenuEvent *e)
 {
     Q_UNUSED(e)
+}
+
+void Console::clear()
+{
+    QPlainTextEdit::clear();
+    m_update = true;
 }

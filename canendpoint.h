@@ -28,6 +28,8 @@ protected slots:
 private:
     ConnectDialog *m_connectDialog = nullptr;
     QCanBusDevice *m_canDevice = nullptr;
+    quint32 m_receive_id;
+    quint32 m_transmit_id;
 };
 
 #endif // CANENDPOINT_H

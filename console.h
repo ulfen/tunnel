@@ -12,11 +12,17 @@ public:
 
     void putData(const QByteArray &data, const QBrush &col=QBrush(Qt::black));
 
+public slots:
+    void clear();
+
 protected:
     void keyPressEvent(QKeyEvent *e) override;
     void mousePressEvent(QMouseEvent *e) override;
     void mouseDoubleClickEvent(QMouseEvent *e) override;
     void contextMenuEvent(QContextMenuEvent *e) override;
+
+private:
+    bool m_update = false;
 };
 
 #endif // CONSOLE_H

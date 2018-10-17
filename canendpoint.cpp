@@ -10,6 +10,10 @@ CanEndpoint::CanEndpoint(QObject *parent) :
     Endpoint(parent)
 {
     m_connectDialog = new ConnectDialog;
+    m_receive_id = 0x180;
+    m_transmit_id = 0x200;
+    max_packet_length = 8;
+    max_burst_length = 2;
 }
 
 CanEndpoint::~CanEndpoint()
@@ -45,6 +49,7 @@ bool CanEndpoint::open()
 
         delete m_canDevice;
         m_canDevice = nullptr;
+
         return false;
     } else {
         QVariant bitRate = m_canDevice->configurationParameter(QCanBusDevice::BitRateKey);
@@ -57,6 +62,7 @@ bool CanEndpoint::open()
                                .arg(p.pluginName).arg(p.deviceInterfaceName));
         }
     }
+
     return true;
 }
 
@@ -77,7 +83,7 @@ void CanEndpoint::showDialog()
 
 bool CanEndpoint::writeData(const QByteArray &data)
 {
-    QCanBusFrame frame(0x200, data);
+    QCanBusFrame frame(m_transmit_id, data);
     return sendFrame(frame);
 }
 
@@ -97,7 +103,7 @@ void CanEndpoint::processReceivedFrames()
         }
         else if (frame.frameType() == QCanBusFrame::DataFrame)
         {
-            if (frame.frameId() == 0x180)
+            if (frame.frameId() == m_receive_id)
             {
                 const QByteArray data = frame.payload();
                 emit getData(data);

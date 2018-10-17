@@ -9,7 +9,10 @@ Endpoint::Endpoint(QObject *parent) :
     m_timer(new QTimer(this))
 {
     connect(m_timer, &QTimer::timeout, this, &Endpoint::update);
+    m_timer->setSingleShot(true);
     m_timer->start(10);
+    max_burst_length = 1;
+    max_packet_length = 1;
 }
 
 Endpoint::~Endpoint()
@@ -40,13 +43,33 @@ void Endpoint::close()
 
 void Endpoint::update()
 {
-    while (!m_queue->isEmpty())
+    bool success = true;
+    int burst = 0;
+
+    while (success)
     {
-        char byte = m_queue->head();
-        QByteArray data(1, byte);
-        bool success = writeData(data);
-        if (!success)
+        if (!waiting.length())
+        {
+            success = false;
+            while (waiting.length() < max_packet_length && !m_queue->isEmpty())
+            {
+                char byte = m_queue->dequeue();
+                waiting.append(byte);
+            }
+        }
+
+        if (waiting.length())
+        {
+            success = writeData(waiting);
+            if (success)
+            {
+                waiting.clear();
+            }
+        }
+
+        if (++burst >= max_burst_length)
             break;
-        m_queue->dequeue();
     }
+
+    m_timer->start(success ? 1 : 10);
 }
